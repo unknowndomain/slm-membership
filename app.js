@@ -106,6 +106,7 @@ module.exports = {
                 }
                 else {
                     res.locals.flash("warning", "Subscription failed.", "Please enter a numeric value greater than £" + minimum + "."); // TODO: configurable currency symbol
+					res.redirect('/membership');
                 }
             }
             else if ((user) && (req.body.subscribe == "Cancel Payment") && (user.gc_subscription)) {
