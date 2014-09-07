@@ -27,7 +27,7 @@ module.exports = {
                 res.render("membership");
             }
             else {
-                res.locals.flash("danger", "Not logged in.", "Please log in to access the members page.");
+                res.locals.flash("danger", "Not logged in.", "You are not logged in.");
                 res.redirect("/"); // could probably be handled better or elsewhere
             }
         });
