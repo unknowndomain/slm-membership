@@ -27,7 +27,7 @@ module.exports = {
                 res.render("membership");
             }
             else {
-                res.locals.flash("danger", "Not logged in.", "Please log in to access the members page.");
+                res.locals.flash("danger", "Not logged in.", "You are not logged in.");
                 res.redirect("/"); // could probably be handled better or elsewhere
             }
         });
@@ -87,7 +87,11 @@ module.exports = {
         app.post("/", function (req, res) {
             var user = res.locals.user;
             if ((user) && (req.body.subscribe == "Become Member")) {
-                if (parseFloat(req.body.subscription) >= config.gocardless.minimum) {
+
+				var minimum = config.gocardless.minimum;
+				if ( ! user.minimum.isNaN() ) minimum = user.minimum;
+					
+                if (parseFloat(req.body.subscription) >= minimum) {
                     var url = gc.subscription.newUrl({
                       amount: req.body.subscription,
                       interval_length: '1',
@@ -101,7 +105,8 @@ module.exports = {
                     res.redirect(url);
                 }
                 else {
-                    res.locals.flash("warning", "Subscription failed.", "Please enter a numeric value greater than £" + config.gocardless.minimum + "."); // TODO: configurable currency symbol
+                    res.locals.flash("warning", "Subscription failed.", "Please enter a numeric value greater than £" + minimum + "."); // TODO: configurable currency symbol
+					res.redirect('/membership');
                 }
             }
             else if ((user) && (req.body.subscribe == "Cancel Payment") && (user.gc_subscription)) {
@@ -184,4 +189,3 @@ module.exports = {
         return app;
     }
 }
-
